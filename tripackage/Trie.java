@@ -1,70 +1,59 @@
 package tripackage;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Trie implements Serializable {
+    private boolean isLeaf;
+    private Map<Character, Trie> children;
 
-    // Alphabet size (# of symbols)
-    static final int ALPHABET_SIZE = 26;
-
-    // trie node
-    static class TrieNode {
-        TrieNode[] children = new TrieNode[ALPHABET_SIZE];
-
-        // isEndOfWord is true if the node represents
-        // end of a word
-        boolean isEndOfWord;
-
-        TrieNode() {
-            isEndOfWord = false;
-            for (int i = 0; i < ALPHABET_SIZE; i++)
-                children[i] = null;
-        }
-    };
-
-    static TrieNode root;
-
-    // If not present, inserts key into trie
-    // If the key is prefix of trie node,
-    // just marks leaf node
-    public static void insert(String key) {
-        int level;
-        int length = key.length();
-        int index;
-
-        TrieNode pCrawl = root;
-
-        for (level = 0; level < length; level++) {
-            index = key.charAt(level) - 'a';
-            if (pCrawl.children[index] == null)
-                pCrawl.children[index] = new TrieNode();
-
-            pCrawl = pCrawl.children[index];
-        }
-
-        // mark last node as leaf
-        pCrawl.isEndOfWord = true;
+    // Constructor
+    public Trie() {
+        isLeaf = false;
+        children = new HashMap<>();
     }
 
-    // Returns true if key presents in trie, else false
-    public static boolean search(String key) {
-        int level;
-        int length = key.length();
-        int index;
-        TrieNode pCrawl = root;
+    // Iterative function to insert a string into a Trie
+    public void insert(String key) {
+        System.out.println("Inserting \"" + key + "\"");
 
-        for (level = 0; level < length; level++) {
-            index = key.charAt(level) - 'a';
+        // start from the root node
+        Trie curr = this;
 
-            if (pCrawl.children[index] == null)
+        // do for each character of the key
+        for (char c : key.toCharArray()) {
+            // create a new node if the path doesn't exist
+            curr.children.putIfAbsent(c, new Trie());
+
+            // go to the next node
+            curr = curr.children.get(c);
+        }
+
+        // mark the current node as a leaf
+        curr.isLeaf = true;
+    }
+
+    // Iterative function to search a key in a Trie. It returns true
+    // if the key is found in the Trie; otherwise, it returns false
+    public boolean search(String key) {
+        System.out.print("Searching \"" + key + "\" : ");
+
+        Trie curr = this;
+
+        // do for each character of the key
+        for (char c : key.toCharArray()) {
+            // go to the next node
+            curr = curr.children.get(c);
+
+            // if the string is invalid (reached end of a path in the Trie)
+            if (curr == null) {
                 return false;
-
-            pCrawl = pCrawl.children[index];
+            }
         }
 
-        return (pCrawl.isEndOfWord);
+        // return true if the current node is a leaf node and the
+        // end of the string is reached
+        return curr.isLeaf;
     }
-
-    // Driver
-
 }

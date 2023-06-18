@@ -16,7 +16,7 @@ public class Trie implements Serializable {
 
     // Iterative function to insert a string into a Trie
     public void insert(String key) {
-        System.out.println("Inserting \"" + key + "\"");
+        // System.out.println("Inserting \"" + key + "\"");
 
         // start from the root node
         Trie curr = this;
